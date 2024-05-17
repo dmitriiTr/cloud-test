@@ -1,20 +1,16 @@
 import './App.css';
 
-import { useContext, useEffect } from 'react';
-
-import { StoreContext } from './Store';
+import { Prices } from './types/pricesSchema';
+import { Store } from './Store';
 import { observer } from 'mobx-react';
+import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import viteLogo from '/vite.svg';
 
-const Prices = observer(() => {
-  const store = useContext(StoreContext);
-  useEffect(() => {
-    store?.init();
-    return () => {
-      store?.dispose();
-    };
-  }, [store]);
-  //console.log(data);
+const PricesPage = observer(() => {
+  const { tab } = useParams();
+  const [store] = useState(() => new Store(tab)); // Стор отдельно специально
+  const error = store.modalError;
 
   return (
     <>
@@ -24,18 +20,34 @@ const Prices = observer(() => {
         </a>
       </div>
       <h1>Prices</h1>
+      {error && <ErrorMessage error={error} />}
       <div className="card">
-        <PricesTable />
+        <TableContainer store={store} />
       </div>
     </>
   );
 });
 
-const PricesTable = observer(() => {
-  const store = useContext(StoreContext);
-  const data = store?.dashboard?.data;
+const ErrorMessage = observer(({ error }: { error: Error }) => {
+  return <div>
+    <h1>{error.message}</h1>
+  </div>;
+});
+
+const TableContainer = observer(({ store }: { store: Store }) => {
+  const tableData = store?.pricesForCurrentTab;
   return <>
-    {data && <table>
+    <div>
+      <button onClick={() => store.setTab('A')}>Tab A</button>
+      <button onClick={() => store.setTab('B')}>Tab B</button>
+    </div>
+    {tableData && <PricesTable tableData={tableData} />}
+  </>;
+});
+
+const PricesTable = observer(({ tableData }: { tableData: Prices[] }) => {
+  return <>
+    {tableData && <table>
       <thead>
         <tr>
           <th>Symbol</th>
@@ -46,7 +58,7 @@ const PricesTable = observer(() => {
         </tr>
       </thead>
       <tbody>
-        {data.map(d => <tr key={d.tradeId}>
+        {tableData.map(d => <tr key={d.tradeId}>
           <td>{d.symbol}</td>
           <td>{d.price}</td>
           <td>{d.bestBidPrice}</td>
@@ -57,4 +69,4 @@ const PricesTable = observer(() => {
     </table>}
   </>;
 });
-export default Prices;
+export default PricesPage;

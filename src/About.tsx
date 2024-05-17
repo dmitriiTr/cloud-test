@@ -14,7 +14,8 @@ const About = () => {
       </div>
       <h1>О приложении</h1>
       <div className="card">
-        <NavLink to="/prices">Перейти к котировкам</NavLink>
+        <NavLink to="/prices/A">Перейти к котировкам A</NavLink>
+        <NavLink to="/prices/B">Перейти к котировкам B</NavLink>
       </div>
     </>
   );
