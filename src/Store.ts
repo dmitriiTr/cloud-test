@@ -16,10 +16,14 @@ export class Store {
     console.log('contr');
     autorun(() => {
       console.log('Auto', this.selectedTab);
-      if (this.selectedTab === 'A') {
-        this.initA();
+      if (this.selectedCoin === null) {
+        if (this.selectedTab === 'A') {
+          this.initA();
+        } else {
+          this.initB();
+        }
       } else {
-        this.initB();
+        this.dispose();
       }
     },);
   }
@@ -48,7 +52,7 @@ export class Store {
   modalError: Error | null = null;
 
   selectedCoin: PricesWithChange | null = null;
-  selectCoin = (symbol: string) => { // тут потребовало стрелочную
+  selectCoin = (symbol: string | null) => { // тут потребовало стрелочную
     this.selectedCoin = this.dashboardA?.data.filter(d => d.symbol === symbol)?.[0] || null;
   };
 
