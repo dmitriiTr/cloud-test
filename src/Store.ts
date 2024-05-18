@@ -1,8 +1,6 @@
 import { Prices, PricesData, PricesDataWithChange, PricesWithChange } from './types/pricesSchema';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
 
-import { createContext } from 'react';
-
 type Tabs = 'A' | 'B';
 
 export class Store {
@@ -10,8 +8,8 @@ export class Store {
     console.log(tab);
     this.selectedTab = tab as Tabs ?? 'A';
     makeAutoObservable(this, {
-      disposeA: action, // Если не указать что это экшены, авторан
-      disposeB: action, // думает что это обрезваблы(или типа того) и реранится
+      dispose: action, // Если не указать что это экшены, авторан
+      //disposeB: action, // думает что это обрезваблы(или типа того) и реранится
       initA: action,
       initB: action
     });
@@ -19,23 +17,21 @@ export class Store {
     autorun(() => {
       console.log('Auto', this.selectedTab);
       if (this.selectedTab === 'A') {
-        this.disposeB();
         this.initA();
       } else {
-        this.disposeA();
         this.initB();
       }
     },);
   }
   private readonly polonexApiA =
     'https://futures-api.poloniex.com/api/v2/tickers';
-  private fetchIntervalA: number | null = null; // Сделать один
   private dashboardA: PricesDataWithChange | null = null;
 
   private readonly polonexApiB =
     'https://futures-api.poloniex.com/api/v2/tickers';
-  private fetchIntervalB: number | null = null;
   private dashboardB: PricesDataWithChange | null = null;
+
+  private fetchInterval: number | null = null;
 
   get pricesForCurrentTab() {
     console.log('get');
@@ -51,12 +47,17 @@ export class Store {
 
   modalError: Error | null = null;
 
+  selectedCoin: PricesWithChange | null = null;
+  selectCoin = (symbol: string) => { // тут потребовало стрелочную
+    this.selectedCoin = this.dashboardA?.data.filter(d => d.symbol === symbol)?.[0] || null;
+  };
+
   selectedTab: Tabs = 'A';
   setTab(tab: Tabs) {
     this.selectedTab = tab;
   }
 
-  private toPriceWithChange (newPrices: Prices, dashboard: PricesDataWithChange | null){
+  private toPriceWithChange(newPrices: Prices, dashboard: PricesDataWithChange | null) {
     const newData = parseFloat(newPrices.price);
     const oldData = parseFloat(dashboard?.data.filter(p => p.symbol === newPrices.symbol)[0].price || '');
     const change = dashboard === null || newData === oldData
@@ -68,16 +69,17 @@ export class Store {
   }
 
   async initA() {
-    if (!this.fetchIntervalA) {
-      runInAction(() => {
-        this.fetchIntervalA = setInterval(() => this.fetchDataA(), 5000);
-      });
-      this.fetchDataA();
+    if (this.fetchInterval) {
+      this.dispose();
     }
+    runInAction(() => {
+      this.fetchInterval = setInterval(() => this.fetchDataA(), 5000);
+    });
+    this.fetchDataA();
   }
 
   private async fetchDataA() {
-    console.log('fetch A', this.fetchIntervalA, this.fetchIntervalB);
+    console.log('fetch A', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiA);
       const data = await res.json() as PricesData;
@@ -100,24 +102,25 @@ export class Store {
     }
   }
 
-  disposeA() {
-    if (this.fetchIntervalA) {
-      clearTimeout(this.fetchIntervalA);
-      this.fetchIntervalA = null;
+  dispose() {
+    if (this.fetchInterval) {
+      clearTimeout(this.fetchInterval);
+      this.fetchInterval = null;
     }
   }
 
   async initB() {
-    if (!this.fetchIntervalB) {
-      runInAction(() => {
-        this.fetchIntervalB = setInterval(() => this.fetchDataB(), 5000);
-      });
-      this.fetchDataB(); // initial fetch
+    if (this.fetchInterval) {
+      this.dispose();
     }
+    runInAction(() => {
+      this.fetchInterval = setInterval(() => this.fetchDataB(), 5000);
+    });
+    this.fetchDataB();
   }
 
   private async fetchDataB() {
-    console.log('fetch B', this.fetchIntervalA, this.fetchIntervalB);
+    console.log('fetch B', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiB);
       const data = await res.json() as PricesData;
@@ -139,13 +142,4 @@ export class Store {
       }
     }
   }
-
-  disposeB() {
-    if (this.fetchIntervalB) {
-      clearTimeout(this.fetchIntervalB);
-      this.fetchIntervalB = null;
-    }
-  }
 }
-
-export const StoreContext = createContext<Store | null>(null);
