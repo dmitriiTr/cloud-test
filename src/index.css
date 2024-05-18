@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -65,4 +68,23 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+.priceUp {
+  animation: grow 3s linear both;
+}
+
+.priceDown {
+  animation: fall 3s linear both;
+}
+
+@keyframes grow {
+  from { color: green }
+  to   { color: black }
+}
+
+@keyframes fall {
+  from { color: red }
+  to   { color: black }
 }

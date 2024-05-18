@@ -1,6 +1,6 @@
+import { Prices, PricesData, PricesDataWithChange, PricesWithChange } from './types/pricesSchema';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
 
-import { PricesData } from './types/pricesSchema';
 import { createContext } from 'react';
 
 type Tabs = 'A' | 'B';
@@ -30,12 +30,12 @@ export class Store {
   private readonly polonexApiA =
     'https://futures-api.poloniex.com/api/v2/tickers';
   private fetchIntervalA: number | null = null; // Сделать один
-  private dashboardA: PricesData | null = null;
+  private dashboardA: PricesDataWithChange | null = null;
 
   private readonly polonexApiB =
     'https://futures-api.poloniex.com/api/v2/tickers';
   private fetchIntervalB: number | null = null;
-  private dashboardB: PricesData | null = null;
+  private dashboardB: PricesDataWithChange | null = null;
 
   get pricesForCurrentTab() {
     console.log('get');
@@ -56,6 +56,17 @@ export class Store {
     this.selectedTab = tab;
   }
 
+  private toPriceWithChange (newPrices: Prices, dashboard: PricesDataWithChange | null){
+    const newData = parseFloat(newPrices.price);
+    const oldData = parseFloat(dashboard?.data.filter(p => p.symbol === newPrices.symbol)[0].price || '');
+    const change = dashboard === null || newData === oldData
+      ? null
+      : newData > oldData
+        ? 'priceUp' : 'priceDown';
+    const newPrice: PricesWithChange = { ...newPrices, change };
+    return newPrice;
+  }
+
   async initA() {
     if (!this.fetchIntervalA) {
       runInAction(() => {
@@ -72,7 +83,10 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        this.dashboardA = data;
+        this.dashboardA = {
+          ...data, data: data.data.map(d => this.toPriceWithChange(d, this.dashboardA))
+        };
+        this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
       });
     } catch (e) {
@@ -109,9 +123,11 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        this.dashboardB = data;
+        this.dashboardB = {
+          ...data, data: data.data.map(d => this.toPriceWithChange(d, this.dashboardB))
+        };
+        this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
-
       });
     } catch (e) {
       console.error('Error getting panel info: ' + e);

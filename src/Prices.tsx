@@ -1,6 +1,7 @@
 import './App.css';
+import './index.css';
 
-import { Prices } from './types/pricesSchema';
+import { PricesWithChange } from './types/pricesSchema';
 import { Store } from './Store';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
@@ -45,28 +46,33 @@ const TableContainer = observer(({ store }: { store: Store }) => {
   </>;
 });
 
-const PricesTable = observer(({ tableData }: { tableData: Prices[] }) => {
-  return <>
-    {tableData && <table>
-      <thead>
+const PricesTable = observer(({ tableData }: { tableData: PricesWithChange[] }) => {
+  return <div className="relative overflow-x-auto">
+    {tableData && <table className="w-full text-left text-gray-500 table-fixed">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <th>Symbol</th>
-          <th>Price</th>
-          <th>Best Bid Price</th>
-          <th>Best Ask Price</th>
-          <th>Best Ask Size</th>
+          <th scope="col" className="py-3">Symbol</th>
+          <th scope="col" className="py-3">Price</th>
+          <th scope="col" className="py-3">Best Bid Price</th>
+          <th scope="col" className="py-3">Best Ask Price</th>
+          <th scope="col" className="py-3">Best Ask Size</th>
         </tr>
       </thead>
       <tbody>
-        {tableData.map(d => <tr key={d.tradeId}>
-          <td>{d.symbol}</td>
-          <td>{d.price}</td>
-          <td>{d.bestBidPrice}</td>
-          <td>{d.bestAskPrice}</td>
-          <td>{d.bestAskSize}</td>
+        {tableData.map(d => <tr className="bg-white border-b" key={d.symbol}>
+          <td scope="row" className="py-4 font-medium text-black">
+            {d.symbol}
+          </td>
+          <td key={d.tradeId} className={`${d.change} py-4 font-medium text-black`}>
+            {d.price}
+            {/* "key={d.tradeId}" это хак. Можно найти решение получше */}
+          </td>
+          <td className="py-4">{d.bestBidPrice}</td>
+          <td className="py-4">{d.bestAskPrice}</td>
+          <td className="py-4">{d.bestAskSize}</td>
         </tr>)}
       </tbody>
     </table>}
-  </>;
+  </div>;
 });
 export default PricesPage;

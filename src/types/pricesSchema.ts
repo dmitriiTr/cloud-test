@@ -4,6 +4,12 @@ export interface PricesData {
     data: Prices[];
 }
 
+export interface PricesDataWithChange {
+    code: string;
+    msg: string;
+    data: PricesWithChange[];
+}
+
 export interface Prices {
     sequence: number;
     symbol: string;
@@ -17,6 +23,9 @@ export interface Prices {
     bestAskSize: number;
     ts: number;
 }
+
+export type ChangeType = 'priceUp' | 'priceDown' | null;
+export type PricesWithChange = Prices & {change: ChangeType};
 
 export enum Side {
     Buy = 'buy',

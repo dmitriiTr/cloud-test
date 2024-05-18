@@ -33,6 +33,6 @@ module.exports = {
       "expression",
       { "allowArrowFunctions": true }
     ],
-    "max-len": 1
+    //"max-len": 1
   },
 }
