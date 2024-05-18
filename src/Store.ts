@@ -57,15 +57,20 @@ export class Store {
     this.selectedTab = tab;
   }
 
-  private toPriceWithChange(newPrices: Prices, dashboard: PricesDataWithChange | null) {
-    const newData = parseFloat(newPrices.price);
-    const oldData = parseFloat(dashboard?.data.filter(p => p.symbol === newPrices.symbol)[0].price || '');
-    const change = dashboard === null || newData === oldData
-      ? null
-      : newData > oldData
-        ? 'priceUp' : 'priceDown';
-    const newPrice: PricesWithChange = { ...newPrices, change };
-    return newPrice;
+  private toPriceWithChange(d: PricesWithChange, newPrices: Prices[]) {
+    const newData = newPrices.filter(n => n.symbol === d.symbol)[0];
+    const oldData = d;
+    // Предполагаем, что не нужно менять строку если tradeId тот же
+    const changed = newData.tradeId !== oldData.tradeId;
+    if (changed) {
+      const change = parseFloat(newData.price || '') === parseFloat(oldData.price)
+        ? null
+        : parseFloat(newData.price || '') > parseFloat(oldData.price)
+          ? 'priceUp' : 'priceDown';
+      const newPrice: PricesWithChange = { ...newData, change };
+      return newPrice;
+    }
+    return d;
   }
 
   async initA() {
@@ -85,9 +90,16 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        this.dashboardA = {
-          ...data, data: data.data.map(d => this.toPriceWithChange(d, this.dashboardA))
-        };
+        if (this.dashboardA) {
+          this.dashboardA = {
+            ...data, data: this.dashboardA.data.map(d => this.toPriceWithChange(d, data.data))
+          };
+        } else {
+          const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
+          this.dashboardA = {
+            ...data, data: emptyChangeData.map(d => this.toPriceWithChange(d, data.data))
+          };
+        }
         this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
       });
@@ -126,9 +138,16 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        this.dashboardB = {
-          ...data, data: data.data.map(d => this.toPriceWithChange(d, this.dashboardB))
-        };
+        if (this.dashboardB) {
+          this.dashboardB = {
+            ...data, data: this.dashboardB.data.map(d => this.toPriceWithChange(d, data.data))
+          };
+        } else {
+          const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
+          this.dashboardB = {
+            ...data, data: emptyChangeData.map(d => this.toPriceWithChange(d, data.data))
+          };
+        }
         this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
       });
