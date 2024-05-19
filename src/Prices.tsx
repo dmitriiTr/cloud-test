@@ -2,8 +2,8 @@ import './App.css';
 import './index.css';
 
 import Modal from './Modal';
+import PricesTable from './Table';
 import { Store } from './Store';
-import TableContainer from './Table';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
@@ -26,8 +26,12 @@ const PricesPage = observer(() => {
         <ModalContainer store={store} />
       </div>
       {error && <ErrorMessage error={error} />}
-      <div className="card">
-        <TableContainer store={store} />
+      <>
+        <button onClick={() => store.setTab('A')}>Tab A</button>
+        <button onClick={() => store.setTab('B')}>Tab B</button>
+      </>
+      <div className="relative overflow-x-auto">
+        <PricesTable store={store} />
       </div>
     </>
   );

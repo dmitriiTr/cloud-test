@@ -1,16 +1,16 @@
 export interface PricesData {
     code: string;
     msg: string;
-    data: Prices[];
+    data: Price[];
 }
 
 export interface PricesDataWithChange {
     code: string;
     msg: string;
-    data: PricesWithChange[];
+    data: PriceWithChange[];
 }
 
-export interface Prices {
+export interface Price {
     sequence: number;
     symbol: string;
     side: Side;
@@ -24,10 +24,9 @@ export interface Prices {
     ts: number;
 }
 
-export type ChangeType = 'priceUp' | 'priceDown' | null;
-export type PricesWithChange = Prices & {change: ChangeType};
+export type PriceWithChange = Price & { change: ChangeType };
 
-export enum Side {
-    Buy = 'buy',
-    Sell = 'sell',
-}
+export type ChangeType = 'priceUp' | 'priceDown' | null;
+
+export type Side = 'buy' | 'sell';
+

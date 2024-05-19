@@ -1,4 +1,4 @@
-import { Prices, PricesData, PricesDataWithChange, PricesWithChange } from './types/pricesSchema';
+import { Price, PriceWithChange, PricesData } from './types/pricesSchema';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
 
 type Tabs = 'A' | 'B';
@@ -29,31 +29,31 @@ export class Store {
   }
   private readonly polonexApiA =
     'https://futures-api.poloniex.com/api/v2/tickers';
-  private dashboardA: PricesDataWithChange | null = null;
+  private tableDataA: PriceWithChange[] = [];
 
   private readonly polonexApiB =
     'https://futures-api.poloniex.com/api/v2/tickers';
-  private dashboardB: PricesDataWithChange | null = null;
+  private tableDataB: PriceWithChange[] = [];
 
   private fetchInterval: number | null = null;
 
   get pricesForCurrentTab() {
     console.log('get');
-    if (this.selectedTab === 'A' && this.dashboardA?.data) {
+    if (this.selectedTab === 'A') {
       // Имитация разных данных
-      const filtered = this.dashboardA.data.slice(0, 6);
+      const filtered = this.tableDataA.slice(0, 6);
       return filtered;
-    } else if (this.dashboardB) {
-      const filtered = this.dashboardB.data.slice(6, 12);
+    } else {
+      const filtered = this.tableDataB.slice(6, 12);
       return filtered;
     }
   }
 
   modalError: Error | null = null;
 
-  selectedCoin: PricesWithChange | null = null;
+  selectedCoin: PriceWithChange | null = null;
   selectCoin = (symbol: string | null) => { // тут потребовало стрелочную
-    this.selectedCoin = this.dashboardA?.data.filter(d => d.symbol === symbol)?.[0] || null;
+    this.selectedCoin = this.tableDataA.filter(d => d.symbol === symbol)?.at(0) || null;
   };
 
   selectedTab: Tabs = 'A';
@@ -61,17 +61,17 @@ export class Store {
     this.selectedTab = tab;
   }
 
-  private toPriceWithChange(d: PricesWithChange, newPrices: Prices[]) {
-    const newData = newPrices.filter(n => n.symbol === d.symbol)[0];
+  private toPriceWithChange(d: PriceWithChange, newPrices: Price[]) {
+    const newData = newPrices.filter(n => n.symbol === d.symbol).at(0);
     const oldData = d;
     // Предполагаем, что не нужно менять строку если tradeId тот же
-    const changed = newData.tradeId !== oldData.tradeId;
-    if (changed) {
-      const change = parseFloat(newData.price || '') === parseFloat(oldData.price)
+    const changed = newData?.tradeId !== oldData.tradeId;
+    if (changed && newData) {
+      const change = parseFloat(newData.price) === parseFloat(oldData.price)
         ? null
-        : parseFloat(newData.price || '') > parseFloat(oldData.price)
+        : parseFloat(newData.price) > parseFloat(oldData.price)
           ? 'priceUp' : 'priceDown';
-      const newPrice: PricesWithChange = { ...newData, change };
+      const newPrice: PriceWithChange = { ...newData, change };
       return newPrice;
     }
     return d;
@@ -94,15 +94,11 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        if (this.dashboardA) {
-          this.dashboardA = {
-            ...data, data: this.dashboardA.data.map(d => this.toPriceWithChange(d, data.data))
-          };
+        if (this.tableDataA.length) {
+          this.tableDataA = this.tableDataA.map(d => this.toPriceWithChange(d, data.data));
         } else {
           const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
-          this.dashboardA = {
-            ...data, data: emptyChangeData.map(d => this.toPriceWithChange(d, data.data))
-          };
+          this.tableDataA = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
         this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
@@ -142,15 +138,11 @@ export class Store {
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
-        if (this.dashboardB) {
-          this.dashboardB = {
-            ...data, data: this.dashboardB.data.map(d => this.toPriceWithChange(d, data.data))
-          };
+        if (this.tableDataB.length) {
+          this.tableDataB = this.tableDataB.map(d => this.toPriceWithChange(d, data.data));
         } else {
           const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
-          this.dashboardB = {
-            ...data, data: emptyChangeData.map(d => this.toPriceWithChange(d, data.data))
-          };
+          this.tableDataB = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
         this.modalError = null;
         // Размещение тут: Близость против реактивности и ед. ответственности
