@@ -16,9 +16,6 @@ const NotFound = () => {
       <div className="card">
         <NavLink to="/">На главную</NavLink>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 };
