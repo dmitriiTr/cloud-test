@@ -42,13 +42,15 @@ const TableContainer = observer(({ store }: { store: Store }) => {
     <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
       <li className="me-2">
         <span onClick={() => store.setTab('A')}
-          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 ${tab === 'A' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
+          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 
+          ${tab === 'A' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
           Tab A
         </span>
       </li>
       <li className="me-2">
         <span onClick={() => store.setTab('B')}
-          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 ${tab === 'B' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
+          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 
+          ${tab === 'B' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
           Tab B
         </span>
       </li>
