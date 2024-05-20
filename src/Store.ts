@@ -1,12 +1,10 @@
-import { Price, PriceWithChange, PricesData } from './types/pricesSchema';
+import { Price, PriceWithChange, PricesData, Tabs } from './types/pricesTypes';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
-
-type Tabs = 'A' | 'B';
 
 export class Store {
   constructor(tab?: string) {
     console.log(tab);
-    this.selectedTab = tab as Tabs ?? 'A';
+    this.selectedTab = (tab ?? 'A') as Tabs;
     makeAutoObservable(this, {
       dispose: action, // Если не указать что это экшены, авторан
       //disposeB: action, // думает что это обрезваблы(или типа того) и реранится
@@ -56,7 +54,10 @@ export class Store {
     this.selectedCoin = this.tableDataA.filter(d => d.symbol === symbol)?.at(0) || null;
   };
 
-  selectedTab: Tabs = 'A';
+  private selectedTab: Tabs = 'A';
+  get tab(){
+    return this.selectedTab;
+  }
   setTab(tab: Tabs) {
     this.selectedTab = tab;
   }

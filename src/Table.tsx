@@ -1,6 +1,6 @@
-import './App.css';
+import './index.css';
 
-import { PriceWithChange } from './types/pricesSchema';
+import { PriceWithChange } from './types/pricesTypes';
 import { Store } from './Store';
 import { observer } from 'mobx-react';
 
@@ -22,7 +22,7 @@ const PricesTable = observer(({ store }: { store: Store }) => {
 const SkeletonBody = () => <tbody className="animate-pulse">
   {Array.from({ length: 6 }).map((_, i) =>
     <tr className="border-b" key={i}>{Array.from({ length: 5 }).map((_, j) => <td key={j}>
-      <div className={`h-4 bg-gray-${i % 2 === 0 ? 200 : 300} mt-3 mb-6 rounded`} />
+      <div className={`h-4 ${i % 2 === 0 ? 'bg-gray-200' : 'bg-gray-300'} mt-3 mb-6 rounded`} />
     </td>)}
     </tr>)}
 </tbody>;

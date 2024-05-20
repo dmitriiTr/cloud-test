@@ -1,4 +1,4 @@
-import './App.css';
+import './index.css';
 
 import { ReactNode } from 'react';
 import { observer } from 'mobx-react';

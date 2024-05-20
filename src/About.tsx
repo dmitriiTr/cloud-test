@@ -1,21 +1,14 @@
-import './App.css';
+import './index.css';
 
-import { NavLink } from 'react-router-dom';
-import viteLogo from '/vite.svg';
+import NavBar from './NavBar';
 
 const About = () => {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-      </div>
-      <h1>О приложении</h1>
-      <div className="card">
-        <NavLink to="/prices/A">Перейти к котировкам A</NavLink>
-        <NavLink to="/prices/B">Перейти к котировкам B</NavLink>
+      <NavBar />
+      <div className='md:mx-60 my-20'>
+        <h1 className="text-6xl">About</h1>
       </div>
     </>
   );

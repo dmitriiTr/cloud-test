@@ -1,40 +1,68 @@
-import './App.css';
 import './index.css';
 
+import { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+
 import Modal from './Modal';
+import NavBar from './NavBar';
 import PricesTable from './Table';
 import { Store } from './Store';
+import { Tabs } from './types/pricesTypes';
 import { observer } from 'mobx-react';
-import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 
 const PricesPage = observer(() => {
   const { tab } = useParams();
+  const { key } = useLocation();
   const [store] = useState(() => new Store(tab)); // Стор отдельно специально
+
+  useEffect(() => () => store.dispose());
+  useEffect(() => {
+    console.log('effect');
+    store.setTab((tab ?? 'A') as Tabs);
+  }, [key, store, tab]);
+
 
   return (
     <>
-      <h1>Prices</h1>
-      <div className="card">
-        <ModalContainer store={store} />
-      </div>
       {<ErrorMessage store={store} />}
-      <>
-        <button onClick={() => store.setTab('A')}>Tab A</button>
-        <button onClick={() => store.setTab('B')}>Tab B</button>
-      </>
-      <div className="relative overflow-x-auto">
-        <PricesTable store={store} />
+      <NavBar />
+      <div className="md:mx-60 my-20">
+        <h1 className="text-6xl">Prices</h1>
+        <div className="p-2">
+          <ModalContainer store={store} />
+        </div>
+        <TableContainer store={store} />
       </div>
     </>
   );
+});
+
+const TableContainer = observer(({ store }: { store: Store }) => {
+  const { tab } = store;
+  return <div className="relative overflow-x-auto my-10">
+    <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
+      <li className="me-2">
+        <span onClick={() => store.setTab('A')}
+          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 ${tab === 'A' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
+          Tab A
+        </span>
+      </li>
+      <li className="me-2">
+        <span onClick={() => store.setTab('B')}
+          className={`cursor-pointer inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 ${tab === 'B' ? 'text-blue-600 bg-gray-100 active' : ''}`}>
+          Tab B
+        </span>
+      </li>
+    </ul>
+    <PricesTable store={store} />
+  </div>;
 });
 
 const ErrorMessage = observer(({ store }: { store: Store }) => {
   if (!store.modalError) {
     return null;
   }
-  return <div className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-400" role="alert">
+  return <div className="absolute w-full right-0 top-[60px] md:w-[425px] md:right-[100px] p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-400" role="alert">
     <span className="font-medium">Server Error</span> {store.modalError.message}
   </div>;
 });
