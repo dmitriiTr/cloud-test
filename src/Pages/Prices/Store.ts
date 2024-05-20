@@ -6,10 +6,10 @@ export type Tabs = 'A' | 'B';
 export class Store {
   constructor(tab?: string) {
     this.selectedTab = (tab ?? 'A') as Tabs;
-    makeAutoObservable<Store, 'initA' | 'initB'>(this, {
+    makeAutoObservable<Store, 'initFetchingA' | 'initFetchingB'>(this, {
       dispose: action,
-      initA: action,
-      initB: action
+      initFetchingA: action,
+      initFetchingB: action
     });
     autorun(() => {
       if (this.selectedCoin === null) {

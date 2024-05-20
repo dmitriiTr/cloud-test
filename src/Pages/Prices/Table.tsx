@@ -49,7 +49,6 @@ const TableRow = observer(({ price, selectCoin }: TableRowProps) => {
       {price.symbol}
     </td>
     <td key={price.price} className={`${price.change} py-4 font-medium text-black`}>
-      {/* Решение через ключи пишется проще альтернативы, меньше рендеров */}
       {price.price}
     </td>
     <td className="py-4 hidden lg:table-cell">{price.bestBidPrice}</td>
