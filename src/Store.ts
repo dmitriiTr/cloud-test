@@ -61,20 +61,21 @@ export class Store {
     this.selectedTab = tab;
   }
 
-  private toPriceWithChange(d: PriceWithChange, newPrices: Price[]) {
-    const newData = newPrices.filter(n => n.symbol === d.symbol).at(0);
-    const oldData = d;
+  private toPriceWithChange(oldData: PriceWithChange, newPrices: Price[]) {
+    const newData = newPrices.filter(n => n.symbol === oldData.symbol).at(0);
     // Предполагаем, что не нужно менять строку если tradeId тот же
     const changed = newData?.tradeId !== oldData.tradeId;
     if (changed && newData) {
-      const change = parseFloat(newData.price) === parseFloat(oldData.price)
+      const newPriceNumber = parseFloat(newData.price);
+      const oldPriceNumber = parseFloat(oldData.price);
+      const change = newPriceNumber === oldPriceNumber
         ? null
-        : parseFloat(newData.price) > parseFloat(oldData.price)
+        : newPriceNumber > oldPriceNumber
           ? 'priceUp' : 'priceDown';
       const newPrice: PriceWithChange = { ...newData, change };
       return newPrice;
     }
-    return d;
+    return oldData;
   }
 
   async initA() {
@@ -91,13 +92,16 @@ export class Store {
     console.log('fetch A', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiA);
+      if (!res.ok) {
+        throw new Error(`Status ${res.status} ${res.statusText}`);
+      }
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
         if (this.tableDataA.length) {
           this.tableDataA = this.tableDataA.map(d => this.toPriceWithChange(d, data.data));
         } else {
-          const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
+          const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
           this.tableDataA = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
         this.modalError = null;
@@ -135,13 +139,16 @@ export class Store {
     console.log('fetch B', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiB);
+      if (!res.ok) {
+        throw new Error(`Status ${res.status} ${res.statusText}`);
+      }
       const data = await res.json() as PricesData;
       console.info('Received panel info ' + (new Date()).toString(), data);
       runInAction(() => {
         if (this.tableDataB.length) {
           this.tableDataB = this.tableDataB.map(d => this.toPriceWithChange(d, data.data));
         } else {
-          const emptyChangeData = data.data.map(d => ({ ...d, change: null }));
+          const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
           this.tableDataB = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
         this.modalError = null;

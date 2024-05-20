@@ -7,25 +7,18 @@ import { Store } from './Store';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import viteLogo from '/vite.svg';
 
 const PricesPage = observer(() => {
   const { tab } = useParams();
   const [store] = useState(() => new Store(tab)); // Стор отдельно специально
-  const error = store.modalError;
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-      </div>
       <h1>Prices</h1>
       <div className="card">
         <ModalContainer store={store} />
       </div>
-      {error && <ErrorMessage error={error} />}
+      {<ErrorMessage store={store} />}
       <>
         <button onClick={() => store.setTab('A')}>Tab A</button>
         <button onClick={() => store.setTab('B')}>Tab B</button>
@@ -37,9 +30,12 @@ const PricesPage = observer(() => {
   );
 });
 
-const ErrorMessage = observer(({ error }: { error: Error }) => {
-  return <div>
-    <h1>{error.message}</h1>
+const ErrorMessage = observer(({ store }: { store: Store }) => {
+  if (!store.modalError) {
+    return null;
+  }
+  return <div className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-400" role="alert">
+    <span className="font-medium">Server Error</span> {store.modalError.message}
   </div>;
 });
 

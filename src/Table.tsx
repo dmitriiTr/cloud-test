@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 const PricesTable = observer(({ store }: { store: Store }) => {
   return <table className="w-full text-left text-gray-500 table-fixed">
-    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+    <thead className="text-xs text-gray-700 bg-gray-50">
       <tr>
         <th scope="col" className="py-3">Symbol</th>
         <th scope="col" className="py-3">Price</th>
@@ -46,7 +46,7 @@ interface TableRowProps {
 }
 const TableRow = observer(({ price, selectCoin }: TableRowProps) => {
   console.log('renderRow');
-  return <tr onClick={() => selectCoin(price.symbol)} className="bg-white border-b">
+  return <tr onClick={() => selectCoin(price.symbol)} className="bg-white border-b cursor-pointer hover:bg-slate-100">
     <td scope="row" className="py-4 font-medium text-black">
       {price.symbol}
     </td>
