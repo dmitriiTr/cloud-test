@@ -25,7 +25,7 @@ const PricesPage = observer(() => {
     <>
       <ErrorContainer store={store} />
       <NavBar />
-      <div className="md:mx-60 my-20">
+      <div className="mx-5 md:mx-20 xl:mx-60 my-20">
         <h1 className="text-6xl">Prices</h1>
         <div className="p-2">
           <ModalContainer store={store} />

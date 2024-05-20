@@ -7,7 +7,7 @@ const About = () => {
   return (
     <>
       <NavBar />
-      <div className='md:mx-60 my-20'>
+      <div className="mx-5 md:mx-20 xl:mx-60 my-20">
         <h1 className="text-6xl">About</h1>
       </div>
     </>

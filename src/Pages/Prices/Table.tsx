@@ -21,7 +21,8 @@ const PricesTable = observer(({ store }: { store: Store }) => {
 
 const SkeletonBody = () => <tbody className="animate-pulse">
   {Array.from({ length: 6 }).map((_, i) =>
-    <tr className="border-b" key={i}>{Array.from({ length: 5 }).map((_, j) => <td key={j}>
+    <tr className="border-b" key={i}>{Array.from({ length: 5 }).map((_, j) => <td key={j}
+      className={`${j > 1 ? 'hidden lg:table-cell' : ''}`}>
       <div className={`h-4 ${i % 2 === 0 ? 'bg-gray-200' : 'bg-gray-300'} mt-3 mb-6 rounded`} />
     </td>)}
     </tr>)}
