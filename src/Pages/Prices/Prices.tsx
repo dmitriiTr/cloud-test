@@ -1,13 +1,13 @@
-import './index.css';
+import '../../index.css';
 
+import { Store, Tabs } from './Store';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
+import ErrorMessage from './ErrorMessage';
 import Modal from './Modal';
-import NavBar from './NavBar';
+import NavBar from '../../Components/NavBar';
 import PricesTable from './Table';
-import { Store } from './Store';
-import { Tabs } from './types/pricesTypes';
 import { observer } from 'mobx-react';
 
 const PricesPage = observer(() => {
@@ -17,14 +17,13 @@ const PricesPage = observer(() => {
 
   useEffect(() => () => store.dispose());
   useEffect(() => {
-    console.log('effect');
     store.setTab((tab ?? 'A') as Tabs);
   }, [key, store, tab]);
 
 
   return (
     <>
-      {<ErrorMessage store={store} />}
+      <ErrorContainer store={store} />
       <NavBar />
       <div className="md:mx-60 my-20">
         <h1 className="text-6xl">Prices</h1>
@@ -38,7 +37,7 @@ const PricesPage = observer(() => {
 });
 
 const TableContainer = observer(({ store }: { store: Store }) => {
-  const { tab } = store;
+  const { selectedTab: tab } = store;
   return <div className="relative overflow-x-auto my-10">
     <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
       <li className="me-2">
@@ -58,13 +57,11 @@ const TableContainer = observer(({ store }: { store: Store }) => {
   </div>;
 });
 
-const ErrorMessage = observer(({ store }: { store: Store }) => {
+const ErrorContainer = observer(({ store }: { store: Store }) => {
   if (!store.modalError) {
     return null;
   }
-  return <div className="absolute w-full right-0 top-[60px] md:w-[425px] md:right-[100px] p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-400" role="alert">
-    <span className="font-medium">Server Error</span> {store.modalError.message}
-  </div>;
+  return <ErrorMessage error={store.modalError} />;
 });
 
 const ModalContainer = observer(({ store }: { store: Store }) => {

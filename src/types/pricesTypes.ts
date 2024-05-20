@@ -29,7 +29,3 @@ export type PriceWithChange = Price & { change: ChangeType };
 export type ChangeType = 'priceUp' | 'priceDown' | null;
 
 export type Side = 'buy' | 'sell';
-
-export type Tabs = 'A' | 'B';
-
-

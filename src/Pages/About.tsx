@@ -1,6 +1,6 @@
-import './index.css';
+import '../index.css';
 
-import NavBar from './NavBar';
+import NavBar from '../Components/NavBar';
 
 const About = () => {
 

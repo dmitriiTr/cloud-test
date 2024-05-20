@@ -1,19 +1,18 @@
-import { Price, PriceWithChange, PricesData, Tabs } from './types/pricesTypes';
+import { Price, PriceWithChange, PricesData } from '../../types/pricesTypes';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
+
+export type Tabs = 'A' | 'B';
 
 export class Store {
   constructor(tab?: string) {
-    console.log(tab);
     this.selectedTab = (tab ?? 'A') as Tabs;
-    makeAutoObservable(this, {
+    makeAutoObservable<Store, 'initA' | 'initB'>(this, {
       dispose: action, // Если не указать что это экшены, авторан
       //disposeB: action, // думает что это обрезваблы(или типа того) и реранится
       initA: action,
       initB: action
     });
-    console.log('contr');
     autorun(() => {
-      console.log('Auto', this.selectedTab);
       if (this.selectedCoin === null) {
         if (this.selectedTab === 'A') {
           this.initA();
@@ -36,7 +35,6 @@ export class Store {
   private fetchInterval: number | null = null;
 
   get pricesForCurrentTab() {
-    console.log('get');
     if (this.selectedTab === 'A') {
       // Имитация разных данных
       const filtered = this.tableDataA.slice(0, 6);
@@ -54,10 +52,7 @@ export class Store {
     this.selectedCoin = this.tableDataA.filter(d => d.symbol === symbol)?.at(0) || null;
   };
 
-  private selectedTab: Tabs = 'A';
-  get tab(){
-    return this.selectedTab;
-  }
+  selectedTab: Tabs = 'A';
   setTab(tab: Tabs) {
     this.selectedTab = tab;
   }
@@ -79,7 +74,7 @@ export class Store {
     return oldData;
   }
 
-  async initA() {
+  private async initA() {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -90,7 +85,6 @@ export class Store {
   }
 
   private async fetchDataA() {
-    console.log('fetch A', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiA);
       if (!res.ok) {
@@ -112,8 +106,8 @@ export class Store {
       console.error('Error getting panel info: ' + e);
       if (e instanceof Error) {
         runInAction(() => {
-          this.modalError = e;
-          console.error(this.modalError.message);
+          this.modalError = e as Error;
+          console.error(this.modalError?.message);
         });
       }
     }
@@ -126,7 +120,7 @@ export class Store {
     }
   }
 
-  async initB() {
+  private async initB() {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -137,7 +131,6 @@ export class Store {
   }
 
   private async fetchDataB() {
-    console.log('fetch B', this.fetchInterval);
     try {
       const res = await fetch(this.polonexApiB);
       if (!res.ok) {
@@ -159,8 +152,8 @@ export class Store {
       console.error('Error getting panel info: ' + e);
       if (e instanceof Error) {
         runInAction(() => {
-          this.modalError = e;
-          console.error(this.modalError.message);
+          this.modalError = e as Error;
+          console.error(this.modalError?.message);
         });
       }
     }

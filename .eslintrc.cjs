@@ -20,13 +20,13 @@ module.exports = {
     "semi": 1,
     "eqeqeq": 1,
     "indent": [1, 2],
-    "no-debugger": 0, // 1
+    "no-debugger": 1,
     "@typescript-eslint/quotes": [1, "single"],
     "no-trailing-spaces": 1,
     "sort-imports": [1, { "allowSeparatedGroups": true }],
     "linebreak-style": [1, "windows"],
     "no-multiple-empty-lines": 1,
-    //"no-console": [1, { "allow": ["warn", "error", "info"] }],
+    "no-console": [1, { "allow": ["warn", "error", "info"] }],
 
     "func-style": [
       1,

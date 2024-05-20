@@ -1,6 +1,6 @@
-import './index.css';
+import '../../index.css';
 
-import { PriceWithChange } from './types/pricesTypes';
+import { PriceWithChange } from '../../types/pricesTypes';
 import { Store } from './Store';
 import { observer } from 'mobx-react';
 
@@ -29,7 +29,6 @@ const SkeletonBody = () => <tbody className="animate-pulse">
 
 const TableBody = observer(({ store }: { store: Store }) => {
   const tableData = store.pricesForCurrentTab;
-  console.log('renderbody');
   return <>
     {tableData.length
       ? <tbody>
@@ -45,7 +44,6 @@ interface TableRowProps {
   selectCoin: (symbol: string | null) => void
 }
 const TableRow = observer(({ price, selectCoin }: TableRowProps) => {
-  console.log('renderRow');
   return <tr onClick={() => selectCoin(price.symbol)} className="bg-white border-b cursor-pointer hover:bg-slate-100">
     <td scope="row" className="py-4 font-medium text-black">
       {price.symbol}
