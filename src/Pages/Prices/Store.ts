@@ -7,17 +7,16 @@ export class Store {
   constructor(tab?: string) {
     this.selectedTab = (tab ?? 'A') as Tabs;
     makeAutoObservable<Store, 'initA' | 'initB'>(this, {
-      dispose: action, // Если не указать что это экшены, авторан
-      //disposeB: action, // думает что это обрезваблы(или типа того) и реранится
+      dispose: action,
       initA: action,
       initB: action
     });
     autorun(() => {
       if (this.selectedCoin === null) {
         if (this.selectedTab === 'A') {
-          this.initA();
+          this.initFetchingA();
         } else {
-          this.initB();
+          this.initFetchingB();
         }
       } else {
         this.dispose();
@@ -36,7 +35,6 @@ export class Store {
 
   get pricesForCurrentTab() {
     if (this.selectedTab === 'A') {
-      // Имитация разных данных
       const filtered = this.tableDataA.slice(0, 6);
       return filtered;
     } else {
@@ -45,10 +43,10 @@ export class Store {
     }
   }
 
-  modalError: Error | null = null;
+  error: Error | null = null;
 
   selectedCoin: PriceWithChange | null = null;
-  selectCoin = (symbol: string | null) => { // тут потребовало стрелочную
+  selectCoin = (symbol: string | null) => {
     this.selectedCoin = this.tableDataA.filter(d => d.symbol === symbol)?.at(0) || null;
   };
 
@@ -59,7 +57,6 @@ export class Store {
 
   private toPriceWithChange(oldData: PriceWithChange, newPrices: Price[]) {
     const newData = newPrices.filter(n => n.symbol === oldData.symbol).at(0);
-    // Предполагаем, что не нужно менять строку если tradeId тот же
     const changed = newData?.tradeId !== oldData.tradeId;
     if (changed && newData) {
       const newPriceNumber = parseFloat(newData.price);
@@ -74,7 +71,7 @@ export class Store {
     return oldData;
   }
 
-  private async initA() {
+  private async initFetchingA() {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -99,17 +96,16 @@ export class Store {
           const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
           this.tableDataA = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
-        this.modalError = null;
-        // Размещение тут: Близость против реактивности и ед. ответственности
+        this.error = null;
       });
     } catch (e) {
-      console.error('Error getting panel info: ' + e);
-      if (e instanceof Error) {
-        runInAction(() => {
-          this.modalError = e as Error;
-          console.error(this.modalError?.message);
-        });
-      }
+      console.error('Error getting prices info: ' + e);
+      runInAction(() => {
+        if (e instanceof Error) {
+          this.error = e;
+          console.error(this.error?.message);
+        }
+      });
     }
   }
 
@@ -120,7 +116,7 @@ export class Store {
     }
   }
 
-  private async initB() {
+  private async initFetchingB() {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -145,17 +141,17 @@ export class Store {
           const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
           this.tableDataB = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
         }
-        this.modalError = null;
-        // Размещение тут: Близость против реактивности и ед. ответственности
+        this.error = null;
       });
     } catch (e) {
-      console.error('Error getting panel info: ' + e);
-      if (e instanceof Error) {
-        runInAction(() => {
-          this.modalError = e as Error;
-          console.error(this.modalError?.message);
-        });
-      }
+      console.error('Error getting prices info: ' + e);
+      runInAction(() => {
+        if (e instanceof Error) {
+          this.error = e;
+          console.error(this.error?.message);
+        }
+      });
+
     }
   }
 }

@@ -13,7 +13,7 @@ import { observer } from 'mobx-react';
 const PricesPage = observer(() => {
   const { tab } = useParams();
   const { key } = useLocation();
-  const [store] = useState(() => new Store(tab)); // Стор отдельно специально
+  const [store] = useState(() => new Store(tab));
 
   useEffect(() => () => store.dispose());
   useEffect(() => {
@@ -60,10 +60,10 @@ const TableContainer = observer(({ store }: { store: Store }) => {
 });
 
 const ErrorContainer = observer(({ store }: { store: Store }) => {
-  if (!store.modalError) {
+  if (!store.error) {
     return null;
   }
-  return <ErrorMessage error={store.modalError} />;
+  return <ErrorMessage error={store.error} />;
 });
 
 const ModalContainer = observer(({ store }: { store: Store }) => {
