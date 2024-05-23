@@ -9,7 +9,7 @@ export class Store {
     makeAutoObservable<Store, 'initFetchingA' | 'initFetchingB'>(this, {
       dispose: action,
       initFetchingA: action,
-      initFetchingB: action
+      initFetchingB: action,
     });
     autorun(() => {
       if (this.selectedCoin === null) {
@@ -21,7 +21,7 @@ export class Store {
       } else {
         this.dispose();
       }
-    },);
+    });
   }
   private readonly polonexApiA =
     'https://futures-api.poloniex.com/api/v2/tickers';
@@ -47,7 +47,8 @@ export class Store {
 
   selectedCoin: PriceWithChange | null = null;
   selectCoin = (symbol: string | null) => {
-    this.selectedCoin = this.tableDataA.filter(d => d.symbol === symbol)?.at(0) || null;
+    this.selectedCoin =
+      this.tableDataA.filter((d) => d.symbol === symbol)?.at(0) || null;
   };
 
   selectedTab: Tabs = 'A';
@@ -56,15 +57,17 @@ export class Store {
   }
 
   private toPriceWithChange(oldData: PriceWithChange, newPrices: Price[]) {
-    const newData = newPrices.filter(n => n.symbol === oldData.symbol).at(0);
+    const newData = newPrices.filter((n) => n.symbol === oldData.symbol).at(0);
     const changed = newData?.tradeId !== oldData.tradeId;
     if (changed && newData) {
       const newPriceNumber = parseFloat(newData.price);
       const oldPriceNumber = parseFloat(oldData.price);
-      const change = newPriceNumber === oldPriceNumber
-        ? null
-        : newPriceNumber > oldPriceNumber
-          ? 'priceUp' : 'priceDown';
+      const change =
+        newPriceNumber === oldPriceNumber
+          ? null
+          : newPriceNumber > oldPriceNumber
+            ? 'priceUp'
+            : 'priceDown';
       const newPrice: PriceWithChange = { ...newData, change };
       return newPrice;
     }
@@ -87,14 +90,22 @@ export class Store {
       if (!res.ok) {
         throw new Error(`Status ${res.status} ${res.statusText}`);
       }
-      const data = await res.json() as PricesData;
-      console.info('Received panel info ' + (new Date()).toString(), data);
+      const data = (await res.json()) as PricesData;
+      console.info('Received panel info ' + new Date().toString(), data);
       runInAction(() => {
         if (this.tableDataA.length) {
-          this.tableDataA = this.tableDataA.map(d => this.toPriceWithChange(d, data.data));
+          this.tableDataA = this.tableDataA.map((d) =>
+            this.toPriceWithChange(d, data.data),
+          );
         } else {
-          const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
-          this.tableDataA = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
+          const emptyChangeData = data.data.map((d) => ({
+            ...d,
+            change: null,
+            priceNumber: parseFloat(d.price) || 0,
+          }));
+          this.tableDataA = emptyChangeData.map((d) =>
+            this.toPriceWithChange(d, data.data),
+          );
         }
         this.error = null;
       });
@@ -132,14 +143,22 @@ export class Store {
       if (!res.ok) {
         throw new Error(`Status ${res.status} ${res.statusText}`);
       }
-      const data = await res.json() as PricesData;
-      console.info('Received panel info ' + (new Date()).toString(), data);
+      const data = (await res.json()) as PricesData;
+      console.info('Received panel info ' + new Date().toString(), data);
       runInAction(() => {
         if (this.tableDataB.length) {
-          this.tableDataB = this.tableDataB.map(d => this.toPriceWithChange(d, data.data));
+          this.tableDataB = this.tableDataB.map((d) =>
+            this.toPriceWithChange(d, data.data),
+          );
         } else {
-          const emptyChangeData = data.data.map(d => ({ ...d, change: null, priceNumber: parseFloat(d.price) || 0 }));
-          this.tableDataB = emptyChangeData.map(d => this.toPriceWithChange(d, data.data));
+          const emptyChangeData = data.data.map((d) => ({
+            ...d,
+            change: null,
+            priceNumber: parseFloat(d.price) || 0,
+          }));
+          this.tableDataB = emptyChangeData.map((d) =>
+            this.toPriceWithChange(d, data.data),
+          );
         }
         this.error = null;
       });
@@ -151,7 +170,6 @@ export class Store {
           console.error(this.error?.message);
         }
       });
-
     }
   }
 }

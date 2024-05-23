@@ -17,7 +17,6 @@
   color: black;
 }
 
-
 body {
   margin: 0;
   display: flex;
@@ -34,20 +33,20 @@ body {
 
 @keyframes grow {
   from {
-    color: green
+    color: green;
   }
 
   to {
-    color: black
+    color: black;
   }
 }
 
 @keyframes fall {
   from {
-    color: red
+    color: red;
   }
 
   to {
-    color: black
+    color: black;
   }
 }
