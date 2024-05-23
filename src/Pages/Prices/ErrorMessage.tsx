@@ -1,5 +1,3 @@
-import '../../index.css';
-
 import { observer } from 'mobx-react';
 
 const ErrorMessage = observer(({ error }: { error: Error }) => {

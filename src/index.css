@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -32,11 +33,21 @@ body {
 }
 
 @keyframes grow {
-  from { color: green }
-  to   { color: black }
+  from {
+    color: green
+  }
+
+  to {
+    color: black
+  }
 }
 
 @keyframes fall {
-  from { color: red }
-  to   { color: black }
+  from {
+    color: red
+  }
+
+  to {
+    color: black
+  }
 }

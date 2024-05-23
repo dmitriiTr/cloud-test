@@ -40,7 +40,7 @@ const NavBar = () => {
                   d="m1 1 4 4 4-4" />
               </svg>
             </button>
-            <div className={`absolute z-10 ${!openDropdown && 'hidden'} font-normal bg-white divide-y
+            <div className={`absolute z-10 ${!openDropdown ? 'hidden' : ''} font-normal bg-white divide-y
             divide-gray-100 rounded-lg shadow w-44`}>
               <ul className="py-2 text-sm text-gray-700">
                 <li>

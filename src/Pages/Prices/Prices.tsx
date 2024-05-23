@@ -1,5 +1,3 @@
-import '../../index.css';
-
 import { Store, Tabs } from './Store';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -21,19 +19,17 @@ const PricesPage = observer(() => {
   }, [key, store, tab]);
 
 
-  return (
-    <>
-      <ErrorContainer store={store} />
-      <NavBar />
-      <div className="mx-5 md:mx-20 xl:mx-60 my-20">
-        <h1 className="text-6xl">Prices</h1>
-        <div className="p-2">
-          <ModalContainer store={store} />
-        </div>
-        <TableContainer store={store} />
+  return <>
+    <ErrorContainer store={store} />
+    <NavBar />
+    <div className="mx-5 md:mx-20 xl:mx-60 my-20">
+      <h1 className="text-6xl">Prices</h1>
+      <div className="p-2">
+        <ModalContainer store={store} />
       </div>
-    </>
-  );
+      <TableContainer store={store} />
+    </div>
+  </>;
 });
 
 const TableContainer = observer(({ store }: { store: Store }) => {

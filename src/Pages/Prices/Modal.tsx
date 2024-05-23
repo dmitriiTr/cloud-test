@@ -1,5 +1,3 @@
-import '../../index.css';
-
 import { ReactNode } from 'react';
 import { observer } from 'mobx-react';
 
@@ -11,24 +9,22 @@ interface ModalProps {
 const Modal = observer(({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) { return null; }
 
-  return (
+  return <div
+    onClick={onClose}
+    className='z-50 fixed top-0 left-0 flex w-full h-full bg-black/40'
+  >
     <div
-      onClick={onClose}
-      className='z-50 fixed top-0 left-0 flex w-full h-full bg-black/40'
+      className='bg-white m-auto border-2'
+      style={{
+        height: 350,
+        width: 540,
+        padding: '2%',
+        boxShadow: '2px solid black',
+      }}
     >
-      <div
-        className='bg-white m-auto border-2'
-        style={{
-          height: 350,
-          width: 540,
-          padding: '2%',
-          boxShadow: '2px solid black',
-        }}
-      >
-        {children}
-      </div>
+      {children}
     </div>
-  );
+  </div>;
 });
 
 export default Modal;

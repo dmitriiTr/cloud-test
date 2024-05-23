@@ -1,5 +1,3 @@
-import '../../index.css';
-
 import { PriceWithChange } from '../../types/pricesTypes';
 import { Store } from './Store';
 import { observer } from 'mobx-react';

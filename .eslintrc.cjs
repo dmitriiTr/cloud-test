@@ -5,6 +5,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:react/recommended',
+    'plugin:mobx/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
@@ -27,12 +29,14 @@ module.exports = {
     "linebreak-style": [1, "windows"],
     "no-multiple-empty-lines": 1,
     "no-console": [1, { "allow": ["warn", "error", "info"] }],
-
     "func-style": [
       1,
       "expression",
       { "allowArrowFunctions": true }
     ],
     "max-len": [1, { "code": 120 }],
+    "react/react-in-jsx-scope" : 0,
+    "react/jsx-wrap-multilines" : [1, { return: "never", arrow: "never" }],
+    "mobx/missing-observer": 0,
   },
 }
