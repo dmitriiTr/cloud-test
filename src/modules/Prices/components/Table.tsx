@@ -1,5 +1,5 @@
-import { PriceWithChange } from '../../types/pricesTypes';
-import { Store } from './Store';
+import { PriceWithChange } from '../../../types/pricesTypes';
+import { Store } from '../Store';
 import { observer } from 'mobx-react';
 
 const PricesTable = observer(({ store }: { store: Store }) => {

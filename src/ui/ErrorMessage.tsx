@@ -1,6 +1,4 @@
-import { observer } from 'mobx-react';
-
-const ErrorMessage = observer(({ error }: { error: Error }) => {
+const ErrorMessage = ({ error }: { error: Error }) => {
   if (!error) {
     return null;
   }
@@ -10,9 +8,9 @@ const ErrorMessage = observer(({ error }: { error: Error }) => {
   p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-400"
       role="alert"
     >
-      <span className="font-medium">Server Error</span> {error.message}
+      <span className="font-medium">Error</span> {error.message}
     </div>
   );
-});
+};
 
 export default ErrorMessage;

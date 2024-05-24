@@ -1,5 +1,7 @@
-import { Price, PriceWithChange, PricesData } from '../../types/pricesTypes';
+import { PriceWithChange, PricesData } from '../../types/pricesTypes';
 import { action, autorun, makeAutoObservable, runInAction } from 'mobx';
+
+import { toPriceWithChange } from './helpers';
 
 export type Tabs = 'A' | 'B';
 
@@ -56,24 +58,6 @@ export class Store {
     this.selectedTab = tab;
   }
 
-  private toPriceWithChange(oldData: PriceWithChange, newPrices: Price[]) {
-    const newData = newPrices.filter((n) => n.symbol === oldData.symbol).at(0);
-    const changed = newData?.tradeId !== oldData.tradeId;
-    if (changed && newData) {
-      const newPriceNumber = parseFloat(newData.price);
-      const oldPriceNumber = parseFloat(oldData.price);
-      const change =
-        newPriceNumber === oldPriceNumber
-          ? null
-          : newPriceNumber > oldPriceNumber
-            ? 'priceUp'
-            : 'priceDown';
-      const newPrice: PriceWithChange = { ...newData, change };
-      return newPrice;
-    }
-    return oldData;
-  }
-
   private async initFetchingA() {
     if (this.fetchInterval) {
       this.dispose();
@@ -95,7 +79,7 @@ export class Store {
       runInAction(() => {
         if (this.tableDataA.length) {
           this.tableDataA = this.tableDataA.map((d) =>
-            this.toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data),
           );
         } else {
           const emptyChangeData = data.data.map((d) => ({
@@ -104,7 +88,7 @@ export class Store {
             priceNumber: parseFloat(d.price) || 0,
           }));
           this.tableDataA = emptyChangeData.map((d) =>
-            this.toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data),
           );
         }
         this.error = null;
@@ -148,7 +132,7 @@ export class Store {
       runInAction(() => {
         if (this.tableDataB.length) {
           this.tableDataB = this.tableDataB.map((d) =>
-            this.toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data),
           );
         } else {
           const emptyChangeData = data.data.map((d) => ({
@@ -157,7 +141,7 @@ export class Store {
             priceNumber: parseFloat(d.price) || 0,
           }));
           this.tableDataB = emptyChangeData.map((d) =>
-            this.toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data),
           );
         }
         this.error = null;

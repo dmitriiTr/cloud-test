@@ -2,13 +2,12 @@ import { Store, Tabs } from './Store';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import ErrorMessage from './ErrorMessage';
-import Modal from './Modal';
-import NavBar from '../../Components/NavBar';
-import PricesTable from './Table';
+import ErrorMessage from '../../ui/ErrorMessage';
+import Modal from './components/Modal';
+import PricesTable from './components/Table';
 import { observer } from 'mobx-react';
 
-const PricesPage = observer(() => {
+const Prices = observer(() => {
   const { tab } = useParams();
   const { key } = useLocation();
   const [store] = useState(() => new Store(tab));
@@ -19,18 +18,21 @@ const PricesPage = observer(() => {
   }, [key, store, tab]);
 
   return (
-    <>
+    <div className="mx-5 md:mx-20 xl:mx-60 my-20">
       <ErrorContainer store={store} />
-      <NavBar />
-      <div className="mx-5 md:mx-20 xl:mx-60 my-20">
-        <h1 className="text-6xl">Prices</h1>
-        <div className="p-2">
-          <ModalContainer store={store} />
-        </div>
-        <TableContainer store={store} />
+      <div className="p-2">
+        <ModalContainer store={store} />
       </div>
-    </>
+      <TableContainer store={store} />
+    </div>
   );
+});
+
+const ErrorContainer = observer(({ store }: { store: Store }) => {
+  if (!store.error) {
+    return null;
+  }
+  return <ErrorMessage error={store.error} />;
 });
 
 const TableContainer = observer(({ store }: { store: Store }) => {
@@ -60,13 +62,6 @@ const TableContainer = observer(({ store }: { store: Store }) => {
       <PricesTable store={store} />
     </div>
   );
-});
-
-const ErrorContainer = observer(({ store }: { store: Store }) => {
-  if (!store.error) {
-    return null;
-  }
-  return <ErrorMessage error={store.error} />;
 });
 
 const ModalContainer = observer(({ store }: { store: Store }) => {
@@ -115,4 +110,4 @@ const ModalContainer = observer(({ store }: { store: Store }) => {
   );
 });
 
-export default PricesPage;
+export default Prices;

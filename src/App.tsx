@@ -1,16 +1,16 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import About from './Pages/About';
-import NotFound from './Pages/NotFound';
-import PricesPage from './Pages/Prices/Prices';
+import { AboutPage } from './pages/About';
+import { NotFoundPage } from './pages/NotFound';
+import { PricesPage } from './pages/Prices';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<About />} />
+        <Route index element={<AboutPage />} />
         <Route path="prices/:tab?" element={<PricesPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
