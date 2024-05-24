@@ -5,6 +5,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import ErrorMessage from '../../ui/ErrorMessage';
 import Modal from './components/Modal';
 import PricesTable from './components/Table';
+import { createPortal } from 'react-dom';
 import { observer } from 'mobx-react';
 
 const Prices = observer(() => {
@@ -20,9 +21,7 @@ const Prices = observer(() => {
   return (
     <div className="mx-5 md:mx-20 xl:mx-60 my-20">
       <ErrorContainer store={store} />
-      <div className="p-2">
-        <ModalContainer store={store} />
-      </div>
+      {createPortal(<ModalContainer store={store} />, document.body)}
       <TableContainer store={store} />
     </div>
   );
