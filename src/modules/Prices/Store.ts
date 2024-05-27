@@ -54,11 +54,11 @@ export class Store {
   };
 
   selectedTab: Tabs = 'A';
-  setTab(tab: Tabs) {
+  setTab = (tab: Tabs) => {
     this.selectedTab = tab;
-  }
+  };
 
-  private async initFetchingA() {
+  private initFetchingA = async () => {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -66,9 +66,9 @@ export class Store {
       this.fetchInterval = setInterval(() => this.fetchDataA(), 5000);
     });
     this.fetchDataA();
-  }
+  };
 
-  private async fetchDataA() {
+  private fetchDataA = async () => {
     try {
       const res = await fetch(this.polonexApiA);
       if (!res.ok) {
@@ -79,7 +79,7 @@ export class Store {
       runInAction(() => {
         if (this.tableDataA.length) {
           this.tableDataA = this.tableDataA.map((d) =>
-            toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data)
           );
         } else {
           const emptyChangeData = data.data.map((d) => ({
@@ -88,7 +88,7 @@ export class Store {
             priceNumber: parseFloat(d.price) || 0,
           }));
           this.tableDataA = emptyChangeData.map((d) =>
-            toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data)
           );
         }
         this.error = null;
@@ -102,16 +102,16 @@ export class Store {
         }
       });
     }
-  }
+  };
 
-  dispose() {
+  dispose = () => {
     if (this.fetchInterval) {
       clearTimeout(this.fetchInterval);
       this.fetchInterval = null;
     }
-  }
+  };
 
-  private async initFetchingB() {
+  private initFetchingB = async () => {
     if (this.fetchInterval) {
       this.dispose();
     }
@@ -119,9 +119,9 @@ export class Store {
       this.fetchInterval = setInterval(() => this.fetchDataB(), 5000);
     });
     this.fetchDataB();
-  }
+  };
 
-  private async fetchDataB() {
+  private fetchDataB = async () => {
     try {
       const res = await fetch(this.polonexApiB);
       if (!res.ok) {
@@ -132,7 +132,7 @@ export class Store {
       runInAction(() => {
         if (this.tableDataB.length) {
           this.tableDataB = this.tableDataB.map((d) =>
-            toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data)
           );
         } else {
           const emptyChangeData = data.data.map((d) => ({
@@ -141,7 +141,7 @@ export class Store {
             priceNumber: parseFloat(d.price) || 0,
           }));
           this.tableDataB = emptyChangeData.map((d) =>
-            toPriceWithChange(d, data.data),
+            toPriceWithChange(d, data.data)
           );
         }
         this.error = null;
@@ -155,5 +155,5 @@ export class Store {
         }
       });
     }
-  }
+  };
 }
